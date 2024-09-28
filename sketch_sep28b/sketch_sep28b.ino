@@ -1,4 +1,7 @@
-#include <Arduino_APDS9960.h>
+#include <Arduino_APDS9960.h>       //gesture
+#include <Arduino_BMI270_BMM150.h>  //gyroscope
+
+#define led_pin D12
 
 void setup() {
   // put your setup code here, to run once:
@@ -7,10 +10,11 @@ void setup() {
   // flash red when putting up gesture
   pinMode(LEDR, OUTPUT);
 
-  while (!Serial);
-    if (!APDS.begin()) {
-      Serial.println("Error initializing sensor!");
-    }
+  while (!Serial)
+    ;
+  if (!APDS.begin()) {
+    Serial.println("Error initializing sensor!");
+  }
 
   APDS.setGestureSensitivity(80);
   Serial.println("Detecting gestures ...");
@@ -18,6 +22,7 @@ void setup() {
   // turn off red led
   digitalWrite(LEDR, HIGH);
 
+  pinMode(led_pin, OUTPUT);
 }
 
 void loop() {
@@ -26,7 +31,7 @@ void loop() {
   // check for only up gesture
   if (APDS.gestureAvailable()) {
     int gesture = APDS.readGesture();
-    switch (gesture){
+    switch (gesture) {
       case GESTURE_UP:
         Serial.println("Going up.");
         digitalWrite(LEDR, LOW);
@@ -37,4 +42,9 @@ void loop() {
         break;
     }
   }
+
+  digitalWrite(led_pin, HIGH);
+  delay(1000);
+  digitalWrite(led_pin, LOW);
+  delay(1000);
 }
